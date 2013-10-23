@@ -62,13 +62,13 @@ def game(stdscr):
         c = stdscr.getch()
         if c == ord('q'):
             break
-        elif c in [curses.KEY_LEFT, ord('h')]:
+        elif c in [curses.KEY_LEFT, ord('h'), ord('a')]:
             vector = (0, -1)
-        elif c in [curses.KEY_RIGHT, ord('l')]:
+        elif c in [curses.KEY_RIGHT, ord('l'), ord('d')]:
             vector = (0, 1)
-        elif c in [curses.KEY_UP, ord('k')]:
+        elif c in [curses.KEY_UP, ord('k'), ord('w')]:
             vector = (-1, 0)
-        elif c in [curses.KEY_DOWN, ord('j')]:
+        elif c in [curses.KEY_DOWN, ord('j'), ord('s')]:
             vector = (1, 0)
 
         if vector != (0, 0) and lastmoved + speed < time.clock():
@@ -89,7 +89,6 @@ def game(stdscr):
                     treats.append(make_treat())
                 stdscr.move(head[0], head[1])
             else:
-                score = len(segments) - 3
                 break
 
         stdscr.refresh()
