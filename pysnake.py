@@ -102,4 +102,4 @@ def game(stdscr):
         time.sleep(looptime)
 
 curses.wrapper(game)
-print("You win! Final snake length: {}.".format(length))
+print("You win! Final snake length: {0}.".format(length))
