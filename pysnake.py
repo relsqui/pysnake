@@ -5,25 +5,22 @@ import time
 import random
 
 
+HEAD = "@"
+SEGMENT = "0"
+TREAT = "!"
+
+head = (0, 0)
+vector = (0, 0)
+segments = []
+length = 3
+
+speed = .15
+lastmoved = 0
+
+treats = []
+treatcount = 1
+
 def game(stdscr):
-    stdscr.nodelay(1)
-
-    HEAD = "@"
-    SEGMENT = "0"
-    TREAT = "!"
-
-    head = (int(curses.LINES/2), int(curses.COLS/2))
-    segments = []
-    length = 3
-    vector = (0, 0)
-
-    speed = .15
-    lastmoved = 0
-
-    treats = []
-    treatcount = 1
-
-
     def location_ok(loc):
         if loc[0] < 0:
             return False
@@ -38,7 +35,8 @@ def game(stdscr):
         return True
 
     def safe_put(char, loc):
-        # this is a workaround because curses won't print to the bottom right char
+        # this is a workaround because curses won't print
+        # to the bottom right spot in a window
         if loc[0] == curses.LINES-1 and loc[1] == curses.COLS-1:
             stdscr.addstr(loc[0], loc[1]-1, char)
             stdscr.insstr(loc[0], loc[1]-1, " ")
@@ -48,15 +46,18 @@ def game(stdscr):
     def make_treat():
         treat = head
         while treat == head or treat in treats or treat in segments:
-            treat = (random.randrange(0, curses.LINES-1), random.randrange(0, curses.COLS-1))
+            treat = (random.randrange(0, curses.LINES-1),
+                     random.randrange(0, curses.COLS-1))
         safe_put(TREAT, treat)
         return treat
 
-
-    safe_put(HEAD, head)
+    stdscr.nodelay(1)
+    head = (int(curses.LINES/2), int(curses.COLS/2))
     treats.append(make_treat())
+    safe_put(HEAD, head)
     stdscr.move(head[0], head[1])
 
+    global vector, length, lastmoved
     while True:
         c = stdscr.getch()
         if c == ord('q'):
@@ -88,8 +89,10 @@ def game(stdscr):
                     treats.append(make_treat())
                 stdscr.move(head[0], head[1])
             else:
-                return
+                score = len(segments) - 3
+                break
 
         stdscr.refresh()
 
 curses.wrapper(game)
+print("You win! Final snake length: {}.".format(length))
