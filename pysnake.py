@@ -14,13 +14,14 @@ vector = (0, 0)
 segments = []
 length = 3
 
-speed = .15
-lastmoved = 0
+looptime = .15 #seconds
 
 treats = []
-treatcount = 1
+treatcount = 2
 
 def game(stdscr):
+    # function definitions are inside the curses wrapper
+    # so they'll have access to window context, etc.
     def location_ok(loc):
         if loc[0] < 0:
             return False
@@ -57,7 +58,7 @@ def game(stdscr):
     safe_put(HEAD, head)
     stdscr.move(head[0], head[1])
 
-    global vector, length, lastmoved
+    global vector, length
     while True:
         c = stdscr.getch()
         if c == ord('q'):
@@ -71,8 +72,7 @@ def game(stdscr):
         elif c in [curses.KEY_DOWN, ord('j'), ord('s')]:
             vector = (1, 0)
 
-        if vector != (0, 0) and lastmoved + speed < time.clock():
-            lastmoved = time.clock()
+        if vector != (0, 0):
             newhead = (head[0] + vector[0], head[1] + vector[1])
             if location_ok(newhead):
                 if len(segments) >= length:
@@ -92,6 +92,7 @@ def game(stdscr):
                 break
 
         stdscr.refresh()
+        time.sleep(looptime)
 
 curses.wrapper(game)
 print("You win! Final snake length: {}.".format(length))
