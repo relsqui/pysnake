@@ -12,7 +12,7 @@ def game(stdscr):
     SEGMENT = "0"
     TREAT = "!"
 
-    head = (13, 39)
+    head = (int(curses.LINES/2), int(curses.COLS/2))
     segments = []
     length = 3
     vector = (0, 0)
