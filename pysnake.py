@@ -53,6 +53,10 @@ def game(stdscr):
         return treat
 
 
+    safe_put(HEAD, head)
+    treats.append(make_treat())
+    stdscr.move(head[0], head[1])
+
     while True:
         c = stdscr.getch()
         if c == ord('q'):
@@ -74,20 +78,17 @@ def game(stdscr):
                     tail = segments.pop()
                     safe_put(" ", tail)
                 segments.insert(0, head)
+                safe_put(SEGMENT, head)
                 head = newhead
+                safe_put(HEAD, head)
                 if head in treats:
                     length += 1
                     treats.remove(head)
+                if len(treats) < treatcount:
+                    treats.append(make_treat())
+                stdscr.move(head[0], head[1])
             else:
                 return
-
-        if len(treats) < treatcount:
-            treats.append(make_treat())
-
-        for segment in segments:
-            safe_put(SEGMENT, segment)
-        safe_put(HEAD, head)
-        stdscr.move(head[0], head[1])
 
         stdscr.refresh()
 
