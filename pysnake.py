@@ -14,7 +14,9 @@ vector = (0, -1)
 segments = []
 length = 3
 
-# seconds:
+# Loop times are in seconds.
+# Slow vs. fast loop allows for different rates of horizontal/vertical
+# movement (to make up for characters being taller than they are wide).
 slowloop = 0.3
 fastloop = 0.15
 looptime = fastloop
@@ -23,8 +25,8 @@ treats = []
 treatcount = 2
 
 def game(stdscr):
-    # function definitions are inside the curses wrapper
-    # so they'll have access to window context, etc.
+    # Function definitions are inside the curses wrapper
+    # so they'll have access to window context etc.
     def location_ok(loc):
         if loc[0] < 0:
             return False
@@ -39,8 +41,7 @@ def game(stdscr):
         return True
 
     def safe_put(char, loc):
-        # this is a workaround because curses won't print
-        # to the bottom right spot in a window
+        # This is a workaround; curses won't print to the bottom right spot.
         if loc[0] == curses.LINES-1 and loc[1] == curses.COLS-1:
             stdscr.addstr(loc[0], loc[1]-1, char)
             stdscr.insstr(loc[0], loc[1]-1, " ")
@@ -80,23 +81,23 @@ def game(stdscr):
             looptime = slowloop
 
         newhead = (head[0] + vector[0], head[1] + vector[1])
-        if location_ok(newhead):
-            if len(segments) >= length:
-                tail = segments.pop()
-                safe_put(" ", tail)
-            segments.insert(0, head)
-            safe_put(SEGMENT, head)
-            head = newhead
-            safe_put(HEAD, head)
-            if head in treats:
-                length += 1
-                treats.remove(head)
-            if len(treats) < treatcount:
-                treats.append(make_treat())
-            stdscr.move(head[0], head[1])
-        else:
+        if not location_ok(newhead):
             break
 
+        if len(segments) >= length:
+            safe_put(" ", segments.pop())
+        segments.insert(0, head)
+        safe_put(SEGMENT, head)
+        head = newhead
+        safe_put(HEAD, head)
+
+        if head in treats:
+            length += 1
+            treats.remove(head)
+        if len(treats) < treatcount:
+            treats.append(make_treat())
+
+        stdscr.move(head[0], head[1])
         stdscr.refresh()
         time.sleep(looptime)
 
