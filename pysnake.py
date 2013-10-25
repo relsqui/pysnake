@@ -3,29 +3,36 @@
 import curses, time, random
 
 
+# How many different treats will appear before looping around.
+# (Remember that the numbers are zero-based.)
+# I recommend keeping this at 10 or less. Higher settings behave weirdly.
+MAXTREATS = 10
 HEAD = "@"
-SEGMENT = "0"
-TREAT = "!"
+
 
 head = (0, 0)
 vector = (0, -1)
 segments = []
-length = 3
+length = startlength = 0
 
-# Loop times are in seconds.
 # Slow vs. fast loop allows for different rates of horizontal/vertical
 # movement (to make up for characters being taller than they are wide).
+# Loop times are in seconds.
 slowloop = 0.2
 fastloop = 0.15
 looptime = fastloop
 
 treats = []
-treatcount = 10
+lasttreat = 9
+nexttreat = 0
+
+gameover = None
 
 
 def game(stdscr):
-    # Function definitions are inside the curses wrapper
-    # so they'll have access to window context etc.
+    # Function definitions are inside the curses wrapper so they'll have access
+    # to the window object, which they all need.
+
     def location_ok(loc):
         if loc[0] < 0:
             return False
@@ -47,21 +54,23 @@ def game(stdscr):
         else:
             stdscr.addstr(loc[0], loc[1], char)
 
-    def make_treat():
+    def make_treat(i):
         treat = head
         while treat == head or treat in treats or treat in segments:
             treat = (random.randrange(0, curses.LINES-1),
                      random.randrange(0, curses.COLS-1))
-        safe_put(TREAT, treat)
+        safe_put(str(i), treat)
         return treat
 
     stdscr.nodelay(1)
     head = (int(curses.LINES/2), int(curses.COLS/2))
-    treats.append(make_treat())
     safe_put(HEAD, head)
     stdscr.move(head[0], head[1])
 
-    global vector, length, looptime
+    for i in xrange(MAXTREATS):
+        treats.append(make_treat(i))
+
+    global vector, length, looptime, nexttreat, gameover
     while True:
         c = stdscr.getch()
         if c == ord(' '):
@@ -84,29 +93,41 @@ def game(stdscr):
             looptime = slowloop
 
         if c == ord('q'):
-            # This is separate so it'll be executed even after a pause command.
+            # This is separate so it'll be executed after a pause command.
+            gameover = "Player quit."
             break
 
         newhead = (head[0] + vector[0], head[1] + vector[1])
         if not location_ok(newhead):
+            gameover = "Bumped into something."
             break
 
-        if len(segments) >= length:
-            safe_put(" ", segments.pop())
-        segments.insert(0, head)
-        safe_put(SEGMENT, head)
+        if length:
+            segments.insert(0, head)
+            safe_put(str(lasttreat), head)
+            if len(segments) > length:
+                safe_put(" ", segments.pop())
+        else:
+            safe_put(" ", head)
         head = newhead
         safe_put(HEAD, head)
 
         if head in treats:
+            i = treats.index(head)
+            if i != nexttreat:
+                gameover = ("Ate treat out of order "
+                            "(expecting {}).".format(nexttreat))
+                break
             length += 1
-            treats.remove(head)
-        if len(treats) < treatcount:
-            treats.append(make_treat())
+            treats[i] = make_treat(i)
+            lasttreat = nexttreat
+            nexttreat = (i + 1) % MAXTREATS
+            for segment in segments:
+                safe_put(str(lasttreat), segment)
 
         stdscr.move(head[0], head[1])
         stdscr.refresh()
         time.sleep(looptime)
 
 curses.wrapper(game)
-print("You win! Final snake length: {0}.".format(length))
+print("{0} You win! Treats eaten: {1}.".format(gameover, length-startlength))
