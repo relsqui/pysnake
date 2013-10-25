@@ -1,8 +1,6 @@
 #!/usr/bin/python
 
-import curses
-import time
-import random
+import curses, time, random
 
 
 HEAD = "@"
@@ -17,12 +15,13 @@ length = 3
 # Loop times are in seconds.
 # Slow vs. fast loop allows for different rates of horizontal/vertical
 # movement (to make up for characters being taller than they are wide).
-slowloop = 0.3
+slowloop = 0.2
 fastloop = 0.15
 looptime = fastloop
 
 treats = []
-treatcount = 2
+treatcount = 10
+
 
 def game(stdscr):
     # Function definitions are inside the curses wrapper
@@ -65,8 +64,12 @@ def game(stdscr):
     global vector, length, looptime
     while True:
         c = stdscr.getch()
-        if c == ord('q'):
-            break
+        if c == ord(' '):
+            stdscr.nodelay(0)
+            c = None
+            while c not in [ord(' '), ord('q')]:
+                c = stdscr.getch()
+            stdscr.nodelay(1)
         elif c in [curses.KEY_LEFT, ord('h'), ord('a')]:
             vector = (0, -1)
             looptime = fastloop
@@ -79,6 +82,10 @@ def game(stdscr):
         elif c in [curses.KEY_DOWN, ord('j'), ord('s')]:
             vector = (1, 0)
             looptime = slowloop
+
+        if c == ord('q'):
+            # This is separate so it'll be executed even after a pause command.
+            break
 
         newhead = (head[0] + vector[0], head[1] + vector[1])
         if not location_ok(newhead):
