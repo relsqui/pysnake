@@ -115,8 +115,8 @@ def game(stdscr):
         if head in treats:
             i = treats.index(head)
             if i != nexttreat:
-                gameover = ("Ate treat out of order "
-                            "(expecting {}).".format(nexttreat))
+                gameover = ("Collected treat out of order "
+                            "(expecting {0}).".format(nexttreat))
                 break
             length += 1
             treats[i] = make_treat(i)
@@ -130,4 +130,4 @@ def game(stdscr):
         time.sleep(looptime)
 
 curses.wrapper(game)
-print("{0} You win! Treats eaten: {1}.".format(gameover, length-startlength))
+print("{0} You win! Treats collected: {1}.".format(gameover, length-startlength))
