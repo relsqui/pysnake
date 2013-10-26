@@ -33,7 +33,15 @@ def game(stdscr):
     # Function definitions are inside the curses wrapper so they'll have access
     # to the window object, which they all need.
 
-    def location_ok(loc):
+    def safe_put(char, loc):
+        # This is a workaround; curses won't print to the bottom right spot.
+        if loc[0] == curses.LINES-1 and loc[1] == curses.COLS-1:
+            stdscr.addstr(loc[0], loc[1]-1, char)
+            stdscr.insstr(loc[0], loc[1]-1, " ")
+        else:
+            stdscr.addstr(loc[0], loc[1], char)
+
+    def location_empty(loc):
         if loc[0] < 0:
             return False
         if loc[0] > curses.LINES-1:
@@ -44,21 +52,21 @@ def game(stdscr):
             return False
         if loc in segments:
             return False
+        if loc in treats:
+            return False
+        if loc == head:
+            return False
         return True
 
-    def safe_put(char, loc):
-        # This is a workaround; curses won't print to the bottom right spot.
-        if loc[0] == curses.LINES-1 and loc[1] == curses.COLS-1:
-            stdscr.addstr(loc[0], loc[1]-1, char)
-            stdscr.insstr(loc[0], loc[1]-1, " ")
-        else:
-            stdscr.addstr(loc[0], loc[1], char)
+    def pick_empty():
+        spot = head
+        while not location_empty(spot):
+            spot = (random.randrange(0, curses.LINES-1),
+                    random.randrange(0, curses.COLS-1))
+        return spot
 
     def make_treat(i):
-        treat = head
-        while treat == head or treat in treats or treat in segments:
-            treat = (random.randrange(0, curses.LINES-1),
-                     random.randrange(0, curses.COLS-1))
+        treat = pick_empty()
         safe_put(str(i), treat)
         return treat
 
@@ -98,7 +106,7 @@ def game(stdscr):
             break
 
         newhead = (head[0] + vector[0], head[1] + vector[1])
-        if not location_ok(newhead):
+        if not location_empty(newhead) and newhead not in treats:
             gameover = "Bumped into something."
             break
 
