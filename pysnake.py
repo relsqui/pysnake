@@ -44,6 +44,11 @@ def game(stdscr):
         else:
             stdscr.addstr(loc[0], loc[1], char)
 
+    def draw_segments():
+        for i in xrange(len(segments)):
+            segment_string = str((lasttreat - i) % MAXTREATS)
+            safe_put(segment_string, segments[i])
+
     def location_empty(loc):
         if loc[0] < 0:
             return False
@@ -125,6 +130,7 @@ def game(stdscr):
             safe_put(str(lasttreat), head)
             if len(segments) > length:
                 safe_put(" ", segments.pop())
+            draw_segments()
         else:
             safe_put(" ", head)
         head = newhead
@@ -142,8 +148,6 @@ def game(stdscr):
             nexttreat = (i + 1) % MAXTREATS
             if nexttreat == 0:
                 make_rock()
-            for segment in segments:
-                safe_put(str(lasttreat), segment)
 
         stdscr.move(head[0], head[1])
         stdscr.refresh()
