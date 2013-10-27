@@ -7,8 +7,10 @@ import curses, time, random
 # (Remember that the numbers are zero-based.)
 # I recommend keeping this at 10 or less. Higher settings behave weirdly.
 MAXTREATS = 10
+GEMCHANCE = 250
 HEAD = "@"
 ROCK = "#"
+GEM = "*"
 
 
 head = (0, 0)
@@ -28,6 +30,8 @@ lasttreat = 9
 nexttreat = 0
 
 rocks = []
+gems = []
+gems_collected = 0
 
 gameover = None
 
@@ -64,6 +68,8 @@ def game(stdscr):
             return False
         if loc in rocks:
             return False
+        if loc in gems:
+            return False
         if loc == head:
             return False
         return True
@@ -85,6 +91,12 @@ def game(stdscr):
         rocks.append(rock)
         safe_put(ROCK, rock)
 
+    def make_gem(loc=None):
+        if not loc:
+            loc = pick_empty()
+        gems.append(loc)
+        safe_put(GEM, loc)
+
     stdscr.nodelay(1)
     head = (int(curses.LINES/2), int(curses.COLS/2))
     safe_put(HEAD, head)
@@ -93,8 +105,11 @@ def game(stdscr):
     for i in xrange(MAXTREATS):
         treats.append(make_treat(i))
 
-    global vector, length, looptime, nexttreat, gameover
+    global vector, length, looptime, nexttreat, gems_collected, gameover
     while True:
+        if not random.randint(0, GEMCHANCE):
+            make_gem()
+
         c = stdscr.getch()
         if c == ord(' '):
             stdscr.nodelay(0)
@@ -121,7 +136,8 @@ def game(stdscr):
             break
 
         newhead = (head[0] + vector[0], head[1] + vector[1])
-        if not location_empty(newhead) and newhead not in treats:
+        if (not location_empty(newhead)
+            and newhead not in treats and newhead not in gems):
             gameover = "Bumped into something."
             break
 
@@ -149,9 +165,14 @@ def game(stdscr):
             if nexttreat == 0:
                 make_rock()
 
+        if head in gems:
+            gems.remove(head)
+            gems_collected += 1
+
         stdscr.move(head[0], head[1])
         stdscr.refresh()
         time.sleep(looptime)
 
 curses.wrapper(game)
-print("{0} You win! Treats collected: {1}.".format(gameover, length-startlength))
+print("{0} You win! You collected {1} treats and {2} "
+      "gems.".format(gameover, length-startlength, gems_collected))
