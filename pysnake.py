@@ -83,8 +83,12 @@ def game(stdscr):
 
     def make_treat(i):
         treat = pick_empty()
+        try:
+            treats[i] = treat
+        except IndexError:
+            # This happens when treats is being initialized.
+            treats.append(treat)
         safe_put(str(i), treat)
-        return treat
 
     def make_rock():
         rock = pick_empty()
@@ -103,7 +107,7 @@ def game(stdscr):
     stdscr.move(head[0], head[1])
 
     for i in xrange(MAXTREATS):
-        treats.append(make_treat(i))
+        make_treat(i)
 
     global vector, length, looptime, nexttreat, gems_collected, gameover
     while True:
@@ -159,7 +163,7 @@ def game(stdscr):
                             "(expecting {0}).".format(nexttreat))
                 break
             length += 1
-            treats[i] = make_treat(i)
+            make_treat(i)
             lasttreat = nexttreat
             nexttreat = (i + 1) % MAXTREATS
             if nexttreat == 0:
