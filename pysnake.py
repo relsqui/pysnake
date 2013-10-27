@@ -8,6 +8,7 @@ import curses, time, random
 # I recommend keeping this at 10 or less. Higher settings behave weirdly.
 MAXTREATS = 10
 HEAD = "@"
+ROCK = "#"
 
 
 head = (0, 0)
@@ -25,6 +26,8 @@ looptime = fastloop
 treats = []
 lasttreat = 9
 nexttreat = 0
+
+rocks = []
 
 gameover = None
 
@@ -54,6 +57,8 @@ def game(stdscr):
             return False
         if loc in treats:
             return False
+        if loc in rocks:
+            return False
         if loc == head:
             return False
         return True
@@ -69,6 +74,11 @@ def game(stdscr):
         treat = pick_empty()
         safe_put(str(i), treat)
         return treat
+
+    def make_rock():
+        rock = pick_empty()
+        rocks.append(rock)
+        safe_put(ROCK, rock)
 
     stdscr.nodelay(1)
     head = (int(curses.LINES/2), int(curses.COLS/2))
@@ -130,6 +140,8 @@ def game(stdscr):
             treats[i] = make_treat(i)
             lasttreat = nexttreat
             nexttreat = (i + 1) % MAXTREATS
+            if nexttreat == 0:
+                make_rock()
             for segment in segments:
                 safe_put(str(lasttreat), segment)
 
