@@ -11,7 +11,8 @@ Instructions
 ------------
 
  * Collect all the treats in the sequence, in order, as many times as you can.
-   The default sequence is 0, 1, 2, 3, 4, 5, 6, 7, 8, 9.
+   (The snake's tail demonstrates one complete sequence, starting from the
+   head, at the beginning of the game.)
  * Every treat you collect is added to your tail.
  * Every time you collect a complete set of treats, a rock appears and impedes
    your path.

@@ -27,9 +27,6 @@ ROCKSTOGEMS = 5
 # Set to 0 to prevent this from happening.
 GEMSTOTROPHY = 10
 
-# How long is the snake at the beginning?
-STARTLENGTH = len(TREATS)
-
 # Slow vs. fast loop allows for different rates of horizontal/vertical
 # movement (to make up for characters being taller than they are wide).
 # Loop times are the delay per game turn, in seconds--lower is faster.
@@ -48,7 +45,7 @@ locale.setlocale(locale.LC_ALL,"")
 head = (0, 0)
 vector = (0, 1)
 segments = []
-length = STARTLENGTH
+length = startlength = len(TREATS)
 
 treats = []
 lasttreat = len(TREATS) - 1
@@ -255,8 +252,8 @@ def ies(number):
 curses.wrapper(game)
 print("{message} You win! You collected {treats} treat{ts}, {gems} gem{gs}, "
       "and {trophies} troph{ies}.".format(message=gameover,
-                                          treats=length-STARTLENGTH,
-                                          ts=s(length-STARTLENGTH),
+                                          treats=length-startlength,
+                                          ts=s(length-startlength),
                                           gems=gems_collected,
                                           gs=s(gems_collected),
                                           trophies=trophies_collected,
