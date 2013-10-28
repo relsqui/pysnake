@@ -15,7 +15,7 @@ MAXTREATS = 10
 # This is the denominator of the probability that a gem will appear on any
 # given iteration of the main loop, so lower number == higher chance.
 # Set to 0 to remove random gems altogether.
-GEMCHANCE = 0
+GEMCHANCE = 250
 
 # How many rocks need to appear before they all turn into gems?
 # Set to 0 to prevent this from happening.
@@ -25,7 +25,7 @@ ROCKSTOGEMS = 5
 head = (0, 0)
 vector = (0, -1)
 segments = []
-length = startlength = 0
+length = startlength = 10
 
 # Slow vs. fast loop allows for different rates of horizontal/vertical
 # movement (to make up for characters being taller than they are wide).
@@ -123,7 +123,7 @@ def game(stdscr):
     for i in xrange(MAXTREATS):
         make_treat(i)
 
-    global vector, length, looptime, nexttreat, gems_collected, gameover
+    global vector, length, looptime, lasttreat, nexttreat, gems_collected, gameover
     while True:
         if GEMCHANCE and not random.randint(0, GEMCHANCE-1):
             make_gem()
