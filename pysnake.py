@@ -3,6 +3,10 @@
 import curses, time, random
 
 
+HEAD = "@"
+ROCK = "#"
+GEM = "*"
+
 # How many different treats will appear before looping around.
 # (Remember that the numbers are zero-based.)
 # I recommend keeping this at 10 or less. Higher settings behave weirdly.
@@ -11,11 +15,11 @@ MAXTREATS = 10
 # This is the denominator of the probability that a gem will appear on any
 # given iteration of the main loop, so lower number == higher chance.
 # Set to 0 to remove random gems altogether.
-GEMCHANCE = 250
+GEMCHANCE = 0
 
-HEAD = "@"
-ROCK = "#"
-GEM = "*"
+# How many rocks need to appear before they all turn into gems?
+# Set to 0 to prevent this from happening.
+ROCKSTOGEMS = 5
 
 
 head = (0, 0)
@@ -96,9 +100,14 @@ def game(stdscr):
         safe_put(str(i), treat)
 
     def make_rock():
+        global rocks
         rock = pick_empty()
         rocks.append(rock)
         safe_put(ROCK, rock)
+        if ROCKSTOGEMS and len(rocks) >= ROCKSTOGEMS:
+            for rock in rocks:
+                make_gem(rock)
+            rocks = []
 
     def make_gem(loc=None):
         if not loc:
@@ -164,8 +173,7 @@ def game(stdscr):
         if head in treats:
             i = treats.index(head)
             if i != nexttreat:
-                gameover = ("Collected treat out of order "
-                            "(expecting {0}).".format(nexttreat))
+                gameover = ("Collected treat out of order.")
                 break
             length += 1
             make_treat(i)

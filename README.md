@@ -8,6 +8,7 @@ Instructions
  * Every time you collect a complete set of treats, a rock appears to impede
    your path.
  * Occasionally, a gem might appear. You can collect gems like treats.
+ * After enough rocks have appeared, they might turn into gems.
  * You can pause at any time by pressing **space**; press space again to
    unpause.
  * The game ends when you press **q**, eat a treat out of order, or collide
