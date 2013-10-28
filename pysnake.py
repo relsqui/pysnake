@@ -65,7 +65,7 @@ def game(stdscr):
             stdscr.addstr(loc[0], loc[1], char)
 
     def draw_segments():
-        for i in xrange(len(segments)):
+        for i in range(len(segments)):
             segment_string = str((lasttreat - i) % MAXTREATS)
             safe_put(segment_string, segments[i])
 
@@ -127,7 +127,7 @@ def game(stdscr):
     safe_put(HEAD, head)
     stdscr.move(head[0], head[1])
 
-    for i in xrange(MAXTREATS):
+    for i in range(MAXTREATS):
         make_treat(i)
 
     global vector, length, looptime, lasttreat, nexttreat, gems_collected, gameover
