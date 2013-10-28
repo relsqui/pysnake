@@ -190,6 +190,13 @@ def game(stdscr):
         stdscr.refresh()
         time.sleep(looptime)
 
+def s(number):
+    if number == 1:
+        return ""
+    return "s"
+
 curses.wrapper(game)
-print("{0} You win! You collected {1} treats and {2} "
-      "gems.".format(gameover, length-startlength, gems_collected))
+print("{message} You win! You collected {treats} treat{ts} and {gems} "
+      "gem{gs}.".format(message=gameover,
+                        treats=length-startlength, ts=s(length-startlength),
+                        gems=gems_collected, gs=s(gems_collected)))
