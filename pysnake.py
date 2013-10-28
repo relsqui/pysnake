@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# coding=UTF-8
 
 
 ## SETTINGS ##
@@ -9,7 +10,8 @@ ROCK = "#"
 GEM = "*"
 
 # What are the unique treat characters, in order?
-TREATS = "0123456789"
+# Unicode is okay, but curses plays better with some alphabets than others.
+TREATS = u"0123456789"
 
 # This is the denominator of the probability that a gem will appear on any
 # given iteration of the main loop, so lower number == higher chance.
@@ -35,7 +37,8 @@ EDGEWRAP = True
 ## END SETTINGS ##
 
 
-import curses, time, random
+import curses, time, random, locale
+locale.setlocale(locale.LC_ALL,"")
 
 head = (0, 0)
 vector = (0, 1)
@@ -61,10 +64,10 @@ def game(stdscr):
     def safe_put(char, loc):
         # This is a workaround; curses won't print to the bottom right spot.
         if loc[0] == curses.LINES-1 and loc[1] == curses.COLS-1:
-            stdscr.addstr(loc[0], loc[1]-1, char)
+            stdscr.addstr(loc[0], loc[1]-1, char.encode("utf-8"))
             stdscr.insstr(loc[0], loc[1]-1, " ")
         else:
-            stdscr.addstr(loc[0], loc[1], char)
+            stdscr.addstr(loc[0], loc[1], char.encode("utf-8"))
 
     def draw_segments():
         for i in range(len(segments)):
