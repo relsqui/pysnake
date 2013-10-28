@@ -3,7 +3,7 @@
 
 ## SETTINGS ##
 
-# These determine how each of these objects is displayed.
+# What character should be used to represent each of these?
 HEAD = "@"
 ROCK = "#"
 GEM = "*"
@@ -24,6 +24,12 @@ ROCKSTOGEMS = 5
 # How long is the snake at the beginning?
 STARTLENGTH = 10 
 
+# Slow vs. fast loop allows for different rates of horizontal/vertical
+# movement (to make up for characters being taller than they are wide).
+# Loop times are the delay per game turn, in seconds--lower is faster.
+SLOWLOOP = 0.2
+FASTLOOP = 0.15
+
 ## END SETTINGS ##
 
 
@@ -34,13 +40,6 @@ vector = (0, -1)
 segments = []
 length = STARTLENGTH
 
-# Slow vs. fast loop allows for different rates of horizontal/vertical
-# movement (to make up for characters being taller than they are wide).
-# Loop times are in seconds.
-slowloop = 0.2
-fastloop = 0.15
-looptime = fastloop
-
 treats = []
 lasttreat = 9
 nexttreat = 0
@@ -50,6 +49,7 @@ gems = []
 gems_collected = 0
 
 gameover = None
+looptime = FASTLOOP
 
 
 def game(stdscr):
@@ -144,16 +144,16 @@ def game(stdscr):
             stdscr.nodelay(1)
         elif c in [curses.KEY_LEFT, ord('h'), ord('a')]:
             vector = (0, -1)
-            looptime = fastloop
+            looptime = FASTLOOP
         elif c in [curses.KEY_RIGHT, ord('l'), ord('d')]:
             vector = (0, 1)
-            looptime = fastloop
+            looptime = FASTLOOP
         elif c in [curses.KEY_UP, ord('k'), ord('w')]:
             vector = (-1, 0)
-            looptime = slowloop
+            looptime = SLOWLOOP
         elif c in [curses.KEY_DOWN, ord('j'), ord('s')]:
             vector = (1, 0)
-            looptime = slowloop
+            looptime = SLOWLOOP
 
         if c == ord('q'):
             # This is separate so it'll be executed after a pause command.

@@ -34,3 +34,4 @@ beginning of the script:
  * How often random gems appear, if at all.
  * How many rocks it takes for them to become gems, if they do.
  * How long the snake is at the beginning of the game.
+ * How fast the snake moves.
