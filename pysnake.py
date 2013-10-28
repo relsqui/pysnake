@@ -8,6 +8,7 @@
 HEAD = "@"
 ROCK = "#"
 GEM = "*"
+TROPHY = "!"
 
 # What are the unique treat characters, in order?
 # Unicode is okay, but curses plays better with some alphabets than others.
@@ -21,6 +22,10 @@ GEMCHANCE = 250
 # How many rocks need to appear before they all turn into gems?
 # Set to 0 to prevent this from happening.
 ROCKSTOGEMS = 5
+
+# How many gems need to appear before they turn into a trophy?
+# Set to 0 to prevent this from happening.
+GEMSTOTROPHY = 10
 
 # How long is the snake at the beginning?
 STARTLENGTH = len(TREATS)
@@ -52,6 +57,8 @@ nexttreat = 0
 rocks = []
 gems = []
 gems_collected = 0
+trophies = []
+trophies_collected = 0
 
 gameover = None
 looptime = FASTLOOP
@@ -92,6 +99,8 @@ def game(stdscr):
             return False
         if loc in gems:
             return False
+        if loc in trophies:
+            return False
         if loc == head:
             return False
         return True
@@ -123,10 +132,21 @@ def game(stdscr):
             rocks = []
 
     def make_gem(loc=None):
+        global gems
         if not loc:
             loc = pick_empty()
         gems.append(loc)
         safe_put(GEM, loc)
+        if GEMSTOTROPHY and len(gems) >= GEMSTOTROPHY:
+            for gem in gems:
+                safe_put(" ", gem)
+            gems = []
+            make_trophy()
+
+    def make_trophy():
+        trophy = pick_empty()
+        trophies.append(trophy)
+        safe_put(TROPHY, trophy)
 
     stdscr.nodelay(1)
     head = (int(curses.LINES/2), int(curses.COLS/2))
@@ -136,7 +156,8 @@ def game(stdscr):
     for i in range(len(TREATS)):
         make_treat(i)
 
-    global vector, length, looptime, lasttreat, nexttreat, gems_collected, gameover
+    global vector, length, looptime, lasttreat, nexttreat
+    global gems_collected, trophies_collected, gameover
     while True:
         if GEMCHANCE and not random.randint(0, GEMCHANCE-1):
             make_gem()
@@ -180,7 +201,9 @@ def game(stdscr):
         newhead = (new_y, new_x)
 
         if (not location_empty(newhead)
-            and newhead not in treats and newhead not in gems):
+            and newhead not in treats
+            and newhead not in gems
+            and newhead not in trophies):
             gameover = "Bumped into something."
             break
 
@@ -211,6 +234,10 @@ def game(stdscr):
             gems.remove(head)
             gems_collected += 1
 
+        if head in trophies:
+            trophies.remove(head)
+            trophies_collected += 1
+
         stdscr.move(head[0], head[1])
         stdscr.refresh()
         time.sleep(looptime)
@@ -220,8 +247,17 @@ def s(number):
         return ""
     return "s"
 
+def ies(number):
+    if number == 1:
+        return "y"
+    return "ies"
+
 curses.wrapper(game)
-print("{message} You win! You collected {treats} treat{ts} and {gems} "
-      "gem{gs}.".format(message=gameover,
-                        treats=length-STARTLENGTH, ts=s(length-STARTLENGTH),
-                        gems=gems_collected, gs=s(gems_collected)))
+print("{message} You win! You collected {treats} treat{ts}, {gems} gem{gs}, "
+      "and {trophies} troph{ies}.".format(message=gameover,
+                                          treats=length-STARTLENGTH,
+                                          ts=s(length-STARTLENGTH),
+                                          gems=gems_collected,
+                                          gs=s(gems_collected),
+                                          trophies=trophies_collected,
+                                          ies=ies(trophies_collected)))
