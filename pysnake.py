@@ -1,14 +1,14 @@
 #!/usr/bin/python
 
-import curses, time, random
 
+## SETTINGS ##
 
+# These determine how each of these objects is displayed.
 HEAD = "@"
 ROCK = "#"
 GEM = "*"
 
-# How many different treats will appear before looping around.
-# (Remember that the numbers are zero-based.)
+# How many treats are in one set or loop?
 # I recommend keeping this at 10 or less. Higher settings behave weirdly.
 MAXTREATS = 10
 
@@ -21,11 +21,18 @@ GEMCHANCE = 250
 # Set to 0 to prevent this from happening.
 ROCKSTOGEMS = 5
 
+# How long is the snake at the beginning?
+STARTLENGTH = 10 
+
+## END SETTINGS ##
+
+
+import curses, time, random
 
 head = (0, 0)
 vector = (0, -1)
 segments = []
-length = startlength = 10
+length = STARTLENGTH
 
 # Slow vs. fast loop allows for different rates of horizontal/vertical
 # movement (to make up for characters being taller than they are wide).
@@ -198,5 +205,5 @@ def s(number):
 curses.wrapper(game)
 print("{message} You win! You collected {treats} treat{ts} and {gems} "
       "gem{gs}.".format(message=gameover,
-                        treats=length-startlength, ts=s(length-startlength),
+                        treats=length-STARTLENGTH, ts=s(length-STARTLENGTH),
                         gems=gems_collected, gs=s(gems_collected)))
