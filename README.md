@@ -10,10 +10,9 @@ Controls
 Instructions
 ------------
 
- * Start by spotting and collecting treat 0, then each higher-numbered treat in
-   sequence. Every time you collect a treat, it is added to your tail.
- * When you've collected the highest-numbered treat, continue with the new
-   treat 0.
+ * Collect all the treats in the sequence, in order, as many times as you can.
+   The default sequence is 0, 1, 2, 3, 4, 5, 6, 7, 8, 9.
+ * Every treat you collect is added to your tail.
  * Every time you collect a complete set of treats, a rock appears and impedes
    your path.
  * Depending on configuration, gems may randomly appear. You can collect them

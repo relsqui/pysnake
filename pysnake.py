@@ -8,9 +8,8 @@ HEAD = "@"
 ROCK = "#"
 GEM = "*"
 
-# How many treats are in one set or loop?
-# I recommend keeping this at 10 or less. Higher settings behave weirdly.
-MAXTREATS = 10
+# What are the unique treat characters, in order?
+TREATS = "0123456789"
 
 # This is the denominator of the probability that a gem will appear on any
 # given iteration of the main loop, so lower number == higher chance.
@@ -22,7 +21,7 @@ GEMCHANCE = 250
 ROCKSTOGEMS = 5
 
 # How long is the snake at the beginning?
-STARTLENGTH = 10 
+STARTLENGTH = len(TREATS)
 
 # Slow vs. fast loop allows for different rates of horizontal/vertical
 # movement (to make up for characters being taller than they are wide).
@@ -39,12 +38,12 @@ EDGEWRAP = True
 import curses, time, random
 
 head = (0, 0)
-vector = (0, -1)
+vector = (0, 1)
 segments = []
 length = STARTLENGTH
 
 treats = []
-lasttreat = 9
+lasttreat = len(TREATS) - 1
 nexttreat = 0
 
 rocks = []
@@ -69,7 +68,7 @@ def game(stdscr):
 
     def draw_segments():
         for i in range(len(segments)):
-            segment_string = str((lasttreat - i) % MAXTREATS)
+            segment_string = TREATS[(lasttreat - i) % len(TREATS)]
             safe_put(segment_string, segments[i])
 
     def location_empty(loc):
@@ -108,7 +107,7 @@ def game(stdscr):
         except IndexError:
             # This happens when treats is being initialized.
             treats.append(treat)
-        safe_put(str(i), treat)
+        safe_put(TREATS[i], treat)
 
     def make_rock():
         global rocks
@@ -131,7 +130,7 @@ def game(stdscr):
     safe_put(HEAD, head)
     stdscr.move(head[0], head[1])
 
-    for i in range(MAXTREATS):
+    for i in range(len(TREATS)):
         make_treat(i)
 
     global vector, length, looptime, lasttreat, nexttreat, gems_collected, gameover
@@ -201,7 +200,7 @@ def game(stdscr):
             length += 1
             make_treat(i)
             lasttreat = nexttreat
-            nexttreat = (i + 1) % MAXTREATS
+            nexttreat = (i + 1) % len(TREATS)
             if nexttreat == 0:
                 make_rock()
 
