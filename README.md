@@ -1,5 +1,6 @@
 Controls
 --------
+These are the defaults; they can be changed in the top of the script.
 
  * Direct your snake using **hjkl**, **wasd**, or **arrow keys**.
  * You can pause at any time by pressing **space** or **p**; press either one
@@ -12,7 +13,7 @@ Instructions
 
  * Collect all the treats in the sequence, in order, as many times as you can.
    (The snake's tail demonstrates one complete sequence, starting from the
-   head, at the beginning of the game.)
+   end and finishing at the head, when the game starts.)
  * Every treat you collect is added to your tail.
  * Every time you collect a complete set of treats, a rock appears and impedes
    your path.
