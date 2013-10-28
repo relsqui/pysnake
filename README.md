@@ -2,8 +2,8 @@ Controls
 --------
 
  * Direct your snake using **hjkl**, **wasd**, or **arrow keys**.
- * You can pause at any time by pressing **space**; press space again to
-   unpause.
+ * You can pause at any time by pressing **space** or **p**; press either one
+   again to unpause.
  * You can end the game at any time by pressing **q**.
 
 

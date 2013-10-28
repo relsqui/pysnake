@@ -136,10 +136,10 @@ def game(stdscr):
             make_gem()
 
         c = stdscr.getch()
-        if c == ord(' '):
+        if c in [ord(' '), ord('p')]:
             stdscr.nodelay(0)
             c = None
-            while c not in [ord(' '), ord('q')]:
+            while c not in [ord(' '), ord('p'), ord('q')]:
                 c = stdscr.getch()
             stdscr.nodelay(1)
         elif c in [curses.KEY_LEFT, ord('h'), ord('a')]:
