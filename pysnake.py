@@ -7,7 +7,12 @@ import curses, time, random
 # (Remember that the numbers are zero-based.)
 # I recommend keeping this at 10 or less. Higher settings behave weirdly.
 MAXTREATS = 10
+
+# This is the denominator of the probability that a gem will appear on any
+# given iteration of the main loop, so lower number == higher chance.
+# Set to 0 to remove random gems altogether.
 GEMCHANCE = 250
+
 HEAD = "@"
 ROCK = "#"
 GEM = "*"
@@ -111,7 +116,7 @@ def game(stdscr):
 
     global vector, length, looptime, nexttreat, gems_collected, gameover
     while True:
-        if not random.randint(0, GEMCHANCE):
+        if GEMCHANCE and not random.randint(0, GEMCHANCE-1):
             make_gem()
 
         c = stdscr.getch()
