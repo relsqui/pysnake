@@ -78,7 +78,7 @@ def game(stdscr):
             segment_string = TREATS[(lasttreat - i) % len(TREATS)]
             safe_put(segment_string, segments[i])
 
-    def location_empty(loc):
+    def location_empty(loc, obstacles_only = False):
         if not EDGEWRAP:
             if loc[0] < 0:
                 return False
@@ -90,9 +90,13 @@ def game(stdscr):
                 return False
         if loc in segments:
             return False
-        if loc in treats:
-            return False
         if loc in rocks:
+            return False
+        if obstacles_only:
+            # This is at least a safe location for the snake head.
+            return True
+
+        if loc in treats:
             return False
         if loc in gems:
             return False
@@ -100,6 +104,7 @@ def game(stdscr):
             return False
         if loc == head:
             return False
+        # This location is definitely really empty.
         return True
 
     def pick_empty():
@@ -184,6 +189,27 @@ def game(stdscr):
             gameover = "Player quit."
             break
 
+        if head in treats:
+            i = treats.index(head)
+            if i != nexttreat:
+                gameover = ("Collected treat out of order.")
+                break
+            length += 1
+            make_treat(i)
+            lasttreat = nexttreat
+            nexttreat = (i + 1) % len(TREATS)
+            if nexttreat == 0:
+                make_rock()
+        elif head in gems:
+            gems.remove(head)
+            gems_collected += 1
+        elif head in trophies:
+            trophies.remove(head)
+            trophies_collected += 1
+        elif not location_empty(head, True):
+            gameover = "Bumped into something."
+            break
+
         new_y = head[0] + vector[0]
         new_x = head[1] + vector[1]
         if EDGEWRAP:
@@ -197,13 +223,6 @@ def game(stdscr):
                 new_x = 0
         newhead = (new_y, new_x)
 
-        if (not location_empty(newhead)
-            and newhead not in treats
-            and newhead not in gems
-            and newhead not in trophies):
-            gameover = "Bumped into something."
-            break
-
         if length:
             segments.insert(0, head)
             safe_put(str(lasttreat), head)
@@ -212,29 +231,9 @@ def game(stdscr):
             draw_segments()
         else:
             safe_put(" ", head)
+
         head = newhead
         safe_put(HEAD, head)
-
-        if head in treats:
-            i = treats.index(head)
-            if i != nexttreat:
-                gameover = ("Collected treat out of order.")
-                break
-            length += 1
-            make_treat(i)
-            lasttreat = nexttreat
-            nexttreat = (i + 1) % len(TREATS)
-            if nexttreat == 0:
-                make_rock()
-
-        if head in gems:
-            gems.remove(head)
-            gems_collected += 1
-
-        if head in trophies:
-            trophies.remove(head)
-            trophies_collected += 1
-
         stdscr.move(head[0], head[1])
         stdscr.refresh()
         time.sleep(looptime)
