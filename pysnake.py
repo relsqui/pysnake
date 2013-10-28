@@ -30,6 +30,9 @@ STARTLENGTH = 10
 SLOWLOOP = 0.2
 FASTLOOP = 0.15
 
+# Should the edges wrap around (as opposed to being obstacles)?
+EDGEWRAP = True
+
 ## END SETTINGS ##
 
 
@@ -70,14 +73,15 @@ def game(stdscr):
             safe_put(segment_string, segments[i])
 
     def location_empty(loc):
-        if loc[0] < 0:
-            return False
-        if loc[0] > curses.LINES-1:
-            return False
-        if loc[1] < 0:
-            return False
-        if loc[1] > curses.COLS-1:
-            return False
+        if not EDGEWRAP:
+            if loc[0] < 0:
+                return False
+            if loc[0] > curses.LINES-1:
+                return False
+            if loc[1] < 0:
+                return False
+            if loc[1] > curses.COLS-1:
+                return False
         if loc in segments:
             return False
         if loc in treats:
@@ -160,7 +164,19 @@ def game(stdscr):
             gameover = "Player quit."
             break
 
-        newhead = (head[0] + vector[0], head[1] + vector[1])
+        new_y = head[0] + vector[0]
+        new_x = head[1] + vector[1]
+        if EDGEWRAP:
+            if new_y < 0:
+                new_y = curses.LINES - 1
+            elif new_y >= curses.LINES:
+                new_y = 0
+            if new_x < 0:
+                new_x = curses.COLS - 1
+            elif new_x >= curses.COLS:
+                new_x = 0
+        newhead = (new_y, new_x)
+
         if (not location_empty(newhead)
             and newhead not in treats and newhead not in gems):
             gameover = "Bumped into something."

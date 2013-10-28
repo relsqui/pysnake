@@ -20,18 +20,11 @@ Instructions
    like treats, but they don't make your tail longer.
  * Depending on configuration, rocks might turn into gems once a certain
    number of them have appeared.
- * The game ends when you eat a treat out of order or collide with a rock, an
-   edge, or your tail.
+ * The game ends when you eat a treat out of order or collide with a rock,
+   your tail, or an edge (if edge wrapping is turned off).
 
 
 Configuration
 -------------
-You can change these settings by altering the all-caps variables in the
-beginning of the script:
-
- * Characters used to display the snake head, rocks, and gems.
- * How many treats are in a full set.
- * How often random gems appear, if at all.
- * How many rocks it takes for them to become gems, if they do.
- * How long the snake is at the beginning of the game.
- * How fast the snake moves.
+You can change a lot of settings by altering the all-caps variables in the
+beginning of the script.
