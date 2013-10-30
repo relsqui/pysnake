@@ -22,7 +22,7 @@ DOWN_KEYS = [curses.KEY_DOWN, ord('j'), ord('s')]
 
 # What are the unique treat characters, in order?
 # Unicode is okay, but curses plays better with some alphabets than others.
-TREATS = u"0123456789"
+TREATS = u"ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
 # This is the denominator of the probability that a gem will appear on any
 # given iteration of the main loop, so lower number == higher chance.
@@ -48,6 +48,9 @@ EDGEWRAP = True
 
 ## END SETTINGS ##
 
+
+# Some initialization happens outside the curses wrapper, because we'll still
+# need the information after it exits.
 
 locale.setlocale(locale.LC_ALL,"")
 
@@ -162,6 +165,8 @@ def game(stdscr):
 
 
     for i in range(len(TREATS)):
+        # We don't use make_treat() to initialize this because it will try to
+        # replace the previous value, which doesn't exist yet.
         new_treat = pick_empty()
         treats.append(new_treat)
         safe_put(TREATS[i], new_treat)
@@ -236,7 +241,6 @@ def game(stdscr):
 
         if length:
             segments.insert(0, head)
-            safe_put(str(lasttreat), head)
             if len(segments) > length:
                 safe_put(" ", segments.pop())
             draw_segments()
@@ -260,7 +264,7 @@ def ies(number):
     return "ies"
 
 curses.wrapper(game)
-print("{message} You win! You collected {treats} treat{ts}, {gems} gem{gs}, "
+print("{message} You win!\nYou collected {treats} treat{ts}, {gems} gem{gs}, "
       "and {trophies} troph{ies}.".format(message=gameover,
                                           treats=length-startlength,
                                           ts=s(length-startlength),
