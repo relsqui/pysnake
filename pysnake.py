@@ -20,8 +20,8 @@ RIGHT_KEYS = [curses.KEY_RIGHT, ord('l'), ord('d')]
 UP_KEYS = [curses.KEY_UP, ord('k'), ord('w')]
 DOWN_KEYS = [curses.KEY_DOWN, ord('j'), ord('s')]
 
-# What are the unique treat characters, in order?
-# Unicode is okay, but curses plays better with some alphabets than others.
+# What are the treat characters, in order?
+# Unicode is okay, but curses plays better with some characters than others.
 TREATS = u"ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
 # This is the denominator of the probability that a gem will appear on any
@@ -204,13 +204,13 @@ def game(stdscr):
 
         if head in treats:
             i = treats.index(head)
-            if i != nexttreat:
+            if TREATS[i] != TREATS[nexttreat]:
                 gameover = ("Collected treat out of order.")
                 break
             length += 1
             make_treat(i)
             lasttreat = nexttreat
-            nexttreat = (i + 1) % len(TREATS)
+            nexttreat = (nexttreat + 1) % len(TREATS)
             if nexttreat == 0:
                 make_rock()
         elif head in gems:
