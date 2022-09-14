@@ -1,3 +1,7 @@
+It's the snake game, but for your terminal! And with a couple of additional features.
+
+![Screenshot of terminal-based snake game.](screenshot.png)
+
 Controls
 --------
 These are the defaults; they can be changed in the top of the script.
