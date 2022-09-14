@@ -13,16 +13,16 @@ GEM = "*"
 TROPHY = "!"
 
 # How would you like to control the snake?
-PAUSE_KEYS = [ord(' '), ord('p')]
-QUIT_KEYS = [ord('q')]
-LEFT_KEYS = [curses.KEY_LEFT, ord('h'), ord('a')]
-RIGHT_KEYS = [curses.KEY_RIGHT, ord('l'), ord('d')]
-UP_KEYS = [curses.KEY_UP, ord('k'), ord('w')]
-DOWN_KEYS = [curses.KEY_DOWN, ord('j'), ord('s')]
+PAUSE_KEYS = [ord(" "), ord("p")]
+QUIT_KEYS = [ord("q")]
+LEFT_KEYS = [curses.KEY_LEFT, ord("h"), ord("a")]
+RIGHT_KEYS = [curses.KEY_RIGHT, ord("l"), ord("d")]
+UP_KEYS = [curses.KEY_UP, ord("k"), ord("w")]
+DOWN_KEYS = [curses.KEY_DOWN, ord("j"), ord("s")]
 
 # What are the treat characters, in order?
 # Unicode is okay, but curses plays better with some characters than others.
-TREATS = u"1234567890"
+TREATS = "1234567890"
 
 # This is the denominator of the probability that a gem will appear on any
 # given iteration of the main loop, so lower number == higher chance.
@@ -57,7 +57,7 @@ EDGEWRAP = True
 # Some initialization happens outside the curses wrapper, because we'll still
 # need the information after it exits.
 
-locale.setlocale(locale.LC_ALL,"")
+locale.setlocale(locale.LC_ALL, "")
 
 head = (0, 0)
 vector = (0, 1)
@@ -88,9 +88,9 @@ def game(stdscr):
 
     def safe_put(char, loc):
         # This is a workaround; curses won't print to the bottom right spot.
-        if loc[0] == curses.LINES-1 and loc[1] == curses.COLS-1:
-            stdscr.addstr(loc[0], loc[1]-1, char.encode("utf-8"))
-            stdscr.insstr(loc[0], loc[1]-1, " ")
+        if loc[0] == curses.LINES - 1 and loc[1] == curses.COLS - 1:
+            stdscr.addstr(loc[0], loc[1] - 1, char.encode("utf-8"))
+            stdscr.insstr(loc[0], loc[1] - 1, " ")
         else:
             stdscr.addstr(loc[0], loc[1], char.encode("utf-8"))
 
@@ -99,16 +99,16 @@ def game(stdscr):
             segment_string = TREATS[(lasttreat - i) % len(TREATS)]
             safe_put(segment_string, segments[i])
 
-    def location_empty(loc, obstacles_only = False):
+    def location_empty(loc, obstacles_only=False):
         global head
         if not EDGEWRAP:
             if loc[0] < 0:
                 return False
-            if loc[0] > curses.LINES-1:
+            if loc[0] > curses.LINES - 1:
                 return False
             if loc[1] < 0:
                 return False
-            if loc[1] > curses.COLS-1:
+            if loc[1] > curses.COLS - 1:
                 return False
         if loc in segments:
             return False
@@ -133,8 +133,10 @@ def game(stdscr):
         global head
         spot = head
         while not location_empty(spot):
-            spot = (random.randrange(0, curses.LINES-1),
-                    random.randrange(0, curses.COLS-1))
+            spot = (
+                random.randrange(0, curses.LINES - 1),
+                random.randrange(0, curses.COLS - 1),
+            )
         return spot
 
     def make_treat(i):
@@ -169,7 +171,6 @@ def game(stdscr):
         trophies.append(new_trophy)
         safe_put(TROPHY, new_trophy)
 
-
     for i in range(len(TREATS)):
         # We don't use make_treat() to initialize this because it will try to
         # replace the previous value, which doesn't exist yet.
@@ -177,7 +178,7 @@ def game(stdscr):
         treats.append(new_treat)
         safe_put(TREATS[i], new_treat)
 
-    head = (int(curses.LINES/2), int(curses.COLS/2))
+    head = (int(curses.LINES / 2), int(curses.COLS / 2))
     safe_put(HEAD, head)
     stdscr.move(head[0], head[1])
     stdscr.nodelay(1)
@@ -211,7 +212,7 @@ def game(stdscr):
         if head in treats:
             i = treats.index(head)
             if TREATS[i] != TREATS[nexttreat]:
-                gameover = ("Collected treat out of order.")
+                gameover = "Collected treat out of order."
                 break
             length += 1
             make_treat(i)
@@ -230,7 +231,7 @@ def game(stdscr):
             gameover = "Bumped into something."
             break
 
-        if GEMCHANCE and not random.randint(0, GEMCHANCE-1):
+        if GEMCHANCE and not random.randint(0, GEMCHANCE - 1):
             make_gem()
 
         new_y = head[0] + vector[0]
@@ -260,22 +261,23 @@ def game(stdscr):
         stdscr.refresh()
         time.sleep(looptime / speed_factor)
 
+
 def s(number):
     if number == 1:
         return ""
     return "s"
+
 
 def ies(number):
     if number == 1:
         return "y"
     return "ies"
 
+
 curses.wrapper(game)
-print("{message} You win!\nYou collected {treats} treat{ts}, {gems} gem{gs}, "
-      "and {trophies} troph{ies}.".format(message=gameover,
-                                          treats=length-startlength,
-                                          ts=s(length-startlength),
-                                          gems=gems_collected,
-                                          gs=s(gems_collected),
-                                          trophies=trophies_collected,
-                                          ies=ies(trophies_collected)))
+print(
+    f"{gameover} You win!\n"
+    f"You collected {length - startlength} treat{s(length - startlength)}, "
+    f"{gems_collected} gem{s(gems_collected)}, "
+    f"and {trophies_collected} troph{ies(trophies_collected)}."
+)
