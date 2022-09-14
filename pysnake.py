@@ -22,7 +22,7 @@ DOWN_KEYS = [curses.KEY_DOWN, ord('j'), ord('s')]
 
 # What are the treat characters, in order?
 # Unicode is okay, but curses plays better with some characters than others.
-TREATS = u"ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+TREATS = u"1234567890"
 
 # This is the denominator of the probability that a gem will appear on any
 # given iteration of the main loop, so lower number == higher chance.
@@ -42,6 +42,11 @@ GEMSTOTROPHY = 10
 # Loop times are the delay per game turn, in seconds--lower is faster.
 SLOWLOOP = 0.2
 FASTLOOP = 0.15
+
+# How much should the game speed up when you complete a treat set?
+# Set to 1 to prevent this from happening. Values lower than 1
+# will make the game slow down instead of speeding up.
+SPEED_UP = 1.2
 
 # Should the edges wrap around (as opposed to being obstacles)?
 EDGEWRAP = True
@@ -71,10 +76,11 @@ trophies_collected = 0
 
 gameover = None
 looptime = FASTLOOP
+speed_factor = 1
 
 
 def game(stdscr):
-    global vector, length, looptime, lasttreat, nexttreat
+    global vector, length, looptime, speed_factor, lasttreat, nexttreat
     global gems_collected, trophies_collected, gameover
 
     # Function definitions are inside the curses wrapper so they'll have access
@@ -213,6 +219,7 @@ def game(stdscr):
             nexttreat = (nexttreat + 1) % len(TREATS)
             if nexttreat == 0:
                 make_rock()
+                speed_factor = speed_factor * SPEED_UP
         elif head in gems:
             gems.remove(head)
             gems_collected += 1
@@ -251,7 +258,7 @@ def game(stdscr):
         safe_put(HEAD, head)
         stdscr.move(head[0], head[1])
         stdscr.refresh()
-        time.sleep(looptime)
+        time.sleep(looptime / speed_factor)
 
 def s(number):
     if number == 1:
